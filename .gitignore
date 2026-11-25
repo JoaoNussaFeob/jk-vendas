@@ -1,26 +1,13 @@
-__pycache__/
-*.pyc
-.env
-.env.*
+# Gerado pelo dart pub get / flutter
+.dart_tool/
+build/
+*.iml
+.idea/
+.DS_Store
+
+# Power BI: cache local e configurações da máquina
 **/.pbi/localSettings.json
 **/.pbi/cache.abf
-**/*.sqlite-journal
-**/*.sqlite-wal
-**/*.sqlite-shm
-*.zip
-*.bundle
 
-# Sistema e editores
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-
-# Dart
-.dart_tool/
-
-# Arquivos temporários do Excel
-~$*
-
-# Saída gerada por Base_Projeto/scripts/validar.py
-Base_Projeto/documentacao/validacao.json
+# Arquivo gerado pela opção 5 do programa
+catalogo_jk_vendas.json
