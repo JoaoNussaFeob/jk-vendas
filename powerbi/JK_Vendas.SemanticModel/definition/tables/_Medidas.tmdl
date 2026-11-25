@@ -1,0 +1,306 @@
+/// Tabela só para guardar as medidas DAX, separadas em pastas.
+table _Medidas
+	lineageTag: 03cadd52-4d40-4bc1-900b-245006d932d8
+
+	/// Soma do valor de cada linha vendida. No Dart: ResumoVendas.receitaCentavos (dividido por 100).
+	measure 'Receita Total' = SUM ( fVendas[Valor Total] )
+		formatString: \R$ #,0.00
+		displayFolder: 1. Vendas
+		lineageTag: 97f1d1b9-7c04-4438-8f9e-9acb34795f94
+
+	/// Unidades vendidas (marmitas, pratos e bebidas).
+	measure 'Total de Vendas' = SUM ( fVendas[Quantidade] )
+		formatString: #,0
+		displayFolder: 1. Vendas
+		lineageTag: 80f98005-472c-4e9f-ba05-891d1617636a
+
+	/// Pedidos diferentes. Um pedido com 3 itens tem 3 linhas, por isso DISTINCTCOUNT. No Dart: ResumoVendas.totalPedidos (usa um Set).
+	measure 'Total de Pedidos' = DISTINCTCOUNT ( fVendas[ID Pedido] )
+		formatString: #,0
+		displayFolder: 1. Vendas
+		lineageTag: aea9b378-1e88-4d1e-b9d2-8101d3dfa3b3
+
+	/// Receita dividida pelos pedidos. No Dart: ResumoVendas.ticketMedioCentavos.
+	measure 'Ticket Médio' = DIVIDE ( [Receita Total], [Total de Pedidos] )
+		formatString: \R$ #,0.00
+		displayFolder: 1. Vendas
+		lineageTag: c2d2f185-df5b-44ad-8a7c-ae7ef562ff21
+
+	measure 'Itens por Pedido' = DIVIDE ( [Total de Vendas], [Total de Pedidos] )
+		formatString: #,0.00
+		displayFolder: 1. Vendas
+		lineageTag: 7bfd5267-0269-4a55-966d-326e83b8e14a
+
+	/// Valor do maior pedido (soma dos itens do pedido).
+	measure 'Maior Pedido' = MAXX ( VALUES ( fVendas[ID Pedido] ), [Receita Total] )
+		formatString: \R$ #,0.00
+		displayFolder: 1. Vendas
+		lineageTag: 2ab544ac-fe27-45d0-99d0-1f4ac8665944
+
+	measure 'Menor Pedido' = MINX ( VALUES ( fVendas[ID Pedido] ), [Receita Total] )
+		formatString: \R$ #,0.00
+		displayFolder: 1. Vendas
+		lineageTag: fda6404f-6b23-42a6-805d-3b8eb395f45e
+
+	/// Média da receita dos dias com venda.
+	measure 'Média de Receita por Dia' = AVERAGEX ( VALUES ( dCalendario[Data] ), [Receita Total] )
+		formatString: \R$ #,0.00
+		displayFolder: 1. Vendas
+		lineageTag: a919a92f-3f60-4de3-aaf0-b0a6f631d311
+
+	/// Receita somada desde o primeiro dia selecionado até o dia atual do gráfico.
+	measure 'Receita Acumulada' =
+			VAR _Ultimo = MAX ( dCalendario[Data] )
+			RETURN
+				CALCULATE (
+					[Receita Total],
+					FILTER ( ALLSELECTED ( dCalendario ), dCalendario[Data] <= _Ultimo )
+				)
+		formatString: \R$ #,0.00
+		displayFolder: 1. Vendas
+		lineageTag: 8dc9af30-8e8e-4d37-a58b-f7fa969f5d8e
+
+	measure 'Receita Dia Anterior' = CALCULATE ( [Receita Total], DATEADD ( dCalendario[Data], -1, DAY ) )
+		formatString: \R$ #,0.00
+		displayFolder: 1. Vendas
+		lineageTag: 3b7a9905-6486-4458-96c4-1774c041eb14
+
+	measure 'Variação vs Dia Anterior %' =
+			VAR _Atual = [Receita Total]
+			VAR _Anterior = [Receita Dia Anterior]
+			RETURN
+				IF ( NOT ISBLANK ( _Anterior ), DIVIDE ( _Atual - _Anterior, _Anterior ) )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 1. Vendas
+		lineageTag: 82ac6c6f-982d-49fb-8f38-32b67554130d
+
+	/// Participação na receita dentro do visual (respeita as segmentações da página).
+	measure '% da Receita' = DIVIDE ( [Receita Total], CALCULATE ( [Receita Total], ALLSELECTED () ) )
+		formatString: 0.0%
+		displayFolder: 1. Vendas
+		lineageTag: ac17e5e8-5129-40e8-9d41-1111b2e1f885
+
+	/// Parte dos pedidos que foi para entrega.
+	measure '% Pedidos Delivery' =
+			DIVIDE (
+				CALCULATE ( [Total de Pedidos], KEEPFILTERS ( fVendas[Local] = "Delivery" ) ),
+				[Total de Pedidos]
+			)
+		formatString: 0.0%
+		displayFolder: 2. Pagamento e Local
+		lineageTag: d9fc8cac-5edf-4768-8f4d-657aae2b7395
+
+	/// Vendido no fiado: dinheiro que o restaurante ainda tem para receber.
+	measure 'Receita Fiado (a receber)' = CALCULATE ( [Receita Total], KEEPFILTERS ( fVendas[Forma de Pagamento] = "Fiado" ) )
+		formatString: \R$ #,0.00
+		displayFolder: 2. Pagamento e Local
+		lineageTag: 8ad163dd-7be5-402b-8de8-e1ecd929a5bf
+
+	measure '% Fiado' = DIVIDE ( [Receita Fiado (a receber)], [Receita Total] )
+		formatString: 0.0%
+		displayFolder: 2. Pagamento e Local
+		lineageTag: 02003ec2-9d57-4ce4-bfbd-5bad251cbf2e
+
+	/// Marmitas = itens do tipo prato do dia (no Dart, só PratoDia.precisaDeTamanho é verdadeiro). No Dart: ResumoVendas.marmitasPorTamanho.
+	measure 'Marmitas Vendidas' = CALCULATE ( [Total de Vendas], KEEPFILTERS ( dItem[Tipo] = "Prato do dia" ) )
+		formatString: #,0
+		displayFolder: 3. Itens e POO
+		lineageTag: 056aa697-89d8-4c10-bdcb-cff84480fb83
+
+	measure 'Receita Marmitas' = CALCULATE ( [Receita Total], KEEPFILTERS ( dItem[Tipo] = "Prato do dia" ) )
+		formatString: \R$ #,0.00
+		displayFolder: 3. Itens e POO
+		lineageTag: 8aa021c2-6921-443c-808a-86b8d05475df
+
+	/// Preço médio pago por marmita, misturando P, M e G.
+	measure 'Preço Médio da Marmita' = DIVIDE ( [Receita Marmitas], [Marmitas Vendidas] )
+		formatString: \R$ #,0.00
+		displayFolder: 3. Itens e POO
+		lineageTag: 690f182c-e7e8-4c6e-bd38-d3e9eaf6149d
+
+	/// Posição do item pela quantidade vendida (1 = mais vendido), entre os itens selecionados. Empate divide a posição (9, 9, 9, 12).
+	measure 'Ranking de Itens' =
+			IF (
+				ISINSCOPE ( dItem[Item] ) && NOT ISBLANK ( [Total de Vendas] ),
+				RANKX ( ALLSELECTED ( dItem ), [Total de Vendas], , DESC, Skip )
+			)
+		formatString: 0
+		displayFolder: 3. Itens e POO
+		lineageTag: e0b33e95-47ee-469d-815a-5d3ab0d4e2bc
+
+	/// Quantidade vendida só dos 10 primeiros do ranking (para o gráfico de barras).
+	measure 'Top 10 Itens (Qtd)' =
+			VAR _Posicao = [Ranking de Itens]
+			RETURN
+				IF ( NOT ISBLANK ( _Posicao ) && _Posicao <= 10, [Total de Vendas] )
+		formatString: #,0
+		displayFolder: 3. Itens e POO
+		lineageTag: a4b4655f-89e1-4c82-8baf-dda8ebbd19da
+
+	/// Item com mais unidades vendidas, no formato "Feijoada completa (12)". No Dart: ResumoVendas.itemMaisVendido.
+	measure 'Item Mais Vendido' =
+			VAR _Tabela =
+				FILTER (
+					ADDCOLUMNS ( VALUES ( dItem[Item] ), "@Qtd", [Total de Vendas] ),
+					NOT ISBLANK ( [@Qtd] )
+				)
+			VAR _Primeiro = TOPN ( 1, _Tabela, [@Qtd], DESC, dItem[Item], ASC )
+			VAR _Nome = MAXX ( _Primeiro, dItem[Item] )
+			VAR _Qtd = MAXX ( _Primeiro, [@Qtd] )
+			RETURN
+				IF ( ISBLANK ( _Qtd ), "-", _Nome & " (" & _Qtd & ")" )
+		displayFolder: 3. Itens e POO
+		lineageTag: ce466492-9a9f-4c18-bd39-e281e4c46dac
+
+	measure 'Itens no Catálogo' = COUNTROWS ( dItem )
+		formatString: #,0
+		displayFolder: 3. Itens e POO
+		lineageTag: 157a8ce9-2257-4137-8922-2066ee09f3ed
+
+	/// Itens com preço ou ml de teste (coluna confirmar). No Dart: ItemPrecoFixo.precoAConfirmar.
+	measure 'Itens a Confirmar' =
+			COALESCE (
+				CALCULATE ( COUNTROWS ( dItem ), KEEPFILTERS ( dItem[Status do Preço] = "A confirmar (teste)" ) ),
+				0
+			)
+		formatString: #,0
+		displayFolder: 3. Itens e POO
+		lineageTag: 7e559b83-e1ee-491e-b07a-8d3193f42d9e
+
+	/// Quanto da receita depende de preços de teste, que ainda precisam ser confirmados com o restaurante.
+	measure '% Receita com Preço a Confirmar' =
+			DIVIDE (
+				CALCULATE ( [Receita Total], KEEPFILTERS ( dItem[Status do Preço] = "A confirmar (teste)" ) ),
+				[Receita Total]
+			)
+		formatString: 0.0%
+		displayFolder: 3. Itens e POO
+		lineageTag: 668bd4e0-515b-44e7-8643-88b9e4e77489
+
+	/// Dias em que o prato esteve no cardápio (com a porção do dia registrada).
+	measure 'Dias no Cardápio' = DISTINCTCOUNT ( fPorcao[Data] )
+		formatString: #,0
+		displayFolder: 3. Itens e POO
+		lineageTag: c3d895f2-3a6e-455b-a9c2-9b90551a3456
+
+	/// Marmitas vendidas por dia em que o prato foi oferecido: mostra o prato que mais vende quando aparece.
+	measure 'Marmitas por Dia no Cardápio' = DIVIDE ( [Marmitas Vendidas], [Dias no Cardápio] )
+		formatString: #,0.0
+		displayFolder: 3. Itens e POO
+		lineageTag: fe2bfb36-e522-45e3-91f4-259760d0503f
+
+	/// Acima deste percentual a sobra que vai para o lixo é alta. No Dart: PorcaoDia.limiteSobraAlta = 20.0.
+	measure 'Limite Sobra Alta' = 0.20
+		formatString: 0%
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: cf7a6beb-62d1-4f55-834f-69b216149463
+
+	measure '% Aproveitamento' =
+			VAR _Desp = [% de Desperdício]
+			RETURN
+				IF ( NOT ISBLANK ( _Desp ), 1 - _Desp )
+		formatString: 0.0%
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: e05b0e79-d2d5-443a-b0c0-f989cbf38cb4
+
+	/// A mesma decisão do Dart (PorcaoDia.alerta), com o mesmo limite de 20%.
+	measure 'Alerta de Sobra' =
+			VAR _Sobra = [Kg Sobra]
+			VAR _Desp = [Kg Desperdiçado]
+			VAR _Pct = DIVIDE ( _Sobra, [Kg Preparado] + [Kg Reaproveitado] )
+			VAR _Texto = FORMAT ( _Pct, "0.0%", "pt-BR" )
+			RETURN
+				IF (
+					NOT ISEMPTY ( fPorcao ),
+					SWITCH (
+						TRUE (),
+						_Sobra = 0, "Acabou tudo: amanhã dá para preparar um pouco mais.",
+						_Desp < _Sobra, "Sobra guardada na geladeira para reaproveitar (até 5 dias).",
+						_Pct > [Limite Sobra Alta], "ALERTA: sobrou " & _Texto & ", que foi para o lixo. Prepare menos amanhã.",
+						"Sobra de " & _Texto & ", dentro do esperado."
+					)
+				)
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: 5d989559-32df-44ab-8cfd-e61aecc5a072
+
+	/// Fim da escala do velocímetro: o dobro do limite.
+	measure 'Escala do Gauge' = 2 * [Limite Sobra Alta]
+		formatString: 0%
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: 57018761-1cee-4837-9b07-472c35e0ebe0
+
+	/// Mudanças de preço e das porções do dia guardadas pelos gatilhos (RN12).
+	measure 'Qtd Alterações' = COALESCE ( COUNTROWS ( fAlteracao ), 0 )
+		formatString: #,0
+		displayFolder: 5. Rastreabilidade
+		lineageTag: fae4c551-c402-4120-bc75-acee222e03ee
+
+	measure 'Última Alteração' = MAX ( fAlteracao[Alterado Em] )
+		formatString: dd/mm/yyyy hh:nn
+		displayFolder: 5. Rastreabilidade
+		lineageTag: a26604fb-88ec-428a-9bb3-d9c7883926ea
+
+	measure 'Kg Preparado' = SUM ( fPorcao[Kg Preparado] )
+		formatString: #,0.0 "kg"
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: e6496221-a2ca-4c23-83e4-4516029d6921
+
+	/// Sobra de arroz e feijão de dias anteriores usada no dia (até 5 dias, RDC 216/2004).
+	measure 'Kg Reaproveitado' = SUM ( fPorcao[Kg Reaproveitado] )
+		formatString: #,0.0 "kg"
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: 88a17d88-eaf9-4a64-af55-0fe00613917b
+
+	measure 'Kg Sobra' = SUM ( fPorcao[Kg Sobra] )
+		formatString: #,0.0 "kg"
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: 47b44af1-4b17-4012-90f3-cbbdf8030599
+
+	/// O que foi para o lixo: a sobra de mistura e acompanhamento e o arroz e feijão que venceram na geladeira.
+	measure 'Kg Desperdiçado' = SUM ( fPorcao[Kg Desperdício] )
+		formatString: #,0.0 "kg"
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: 965ba3f6-36f4-473e-a1ca-c6ec47d19700
+
+	/// Quanto do que foi para a mesa (preparado + reaproveitado) virou lixo.
+	measure '% de Desperdício' = DIVIDE ( [Kg Desperdiçado], [Kg Preparado] + [Kg Reaproveitado] )
+		formatString: 0.0%
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: b7044caf-2907-4127-8c53-d94adee5f49c
+
+	/// Porções (em cada dia) que não se reaproveitam e sobraram mais que o limite de 20%.
+	measure 'Porções com Sobra Alta' =
+			VAR _Limite = [Limite Sobra Alta]
+			RETURN
+				COALESCE (
+					COUNTROWS (
+						FILTER (
+							fPorcao,
+							fPorcao[Kg Desperdício] > 0
+								&& DIVIDE ( fPorcao[Kg Sobra], fPorcao[Kg Preparado] + fPorcao[Kg Reaproveitado] ) > _Limite
+								&& RELATED ( dPorcao[Reaproveitamento] ) = "Não reaproveitável"
+						)
+					),
+					0
+				)
+		formatString: #,0
+		displayFolder: 4. Porções (ODS 12)
+		lineageTag: e8f8db1c-c8e4-476f-9d58-8c679b5eac8c
+
+	column Medidas
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8b650089-6faa-485c-8b54-51e160c480b3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Medidas]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Medidas = calculated
+		mode: import
+		source = ROW ( "Medidas", 0 )
+
+	annotation PBI_Id = 2b8949e6df1d4672848a8b322b0c7795
+

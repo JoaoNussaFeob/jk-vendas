@@ -1,0 +1,76 @@
+/// Dimensão das porções (visão vw_dporcao): arroz e feijão (reaproveitáveis por até 5 dias, RDC 216/2004), acompanhamentos e misturas.
+table dPorcao
+	lineageTag: ec4603c7-3f04-4d99-8931-b855c9b7c8ca
+
+	column 'ID Porção'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: be29f75b-ba74-4d4a-906a-d136586f81c8
+		summarizeBy: none
+		sourceColumn: ID Porção
+
+		annotation SummarizationSetBy = Automatic
+
+	column Porção
+		dataType: string
+		lineageTag: fd472f3b-8163-4879-bbc6-763db69d0592
+		summarizeBy: none
+		sourceColumn: Porção
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tipo
+		dataType: string
+		lineageTag: 210620bd-d690-42c8-86fe-d8e65c5ff29b
+		summarizeBy: none
+		sourceColumn: Tipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reaproveitamento
+		dataType: string
+		lineageTag: b041e1d6-6a5e-47df-8177-a3a9a6d168c5
+		summarizeBy: none
+		sourceColumn: Reaproveitamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Validade (dias)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 85fb08a3-59fc-45e7-80ad-2486ea202493
+		summarizeBy: none
+		sourceColumn: Validade (dias)
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy Porções
+		lineageTag: c0c78634-0dad-414c-af89-390a263fe99f
+
+		level Tipo
+			lineageTag: 74b645b9-738e-4c79-b5a8-7082a964edc0
+			column: Tipo
+
+		level Porção
+			lineageTag: 75c84edb-fc00-40b6-9fb8-1f0fd4f10696
+			column: Porção
+
+	partition dPorcao = m
+		mode: import
+		source =
+				let
+					// 1. Conecta no MySQL e abre a visão vw_dporcao
+					Fonte = MySQL.Database(Servidor, Banco, [ReturnSingleDatabase = true]),
+					Visao = Fonte{[Schema = Banco, Item = "vw_dporcao"]}[Data],
+					Renomeado = Table.RenameColumns(Visao, {
+						{"id_porcao", "ID Porção"}, {"porcao", "Porção"}, {"tipo", "Tipo"},
+						{"reaproveitamento", "Reaproveitamento"}, {"validade_dias", "Validade (dias)"}}),
+					Tipos = Table.TransformColumnTypes(Renomeado, {
+						{"ID Porção", Int64.Type}, {"Porção", type text}, {"Tipo", type text},
+						{"Reaproveitamento", type text}, {"Validade (dias)", Int64.Type}})
+				in
+					Tipos
+
+	annotation PBI_ResultType = Table
+

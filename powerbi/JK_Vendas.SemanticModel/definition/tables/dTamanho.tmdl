@@ -1,0 +1,60 @@
+/// Dimensão dos tamanhos (tabela tamanho_marmita): P, M e G são as marmitas, com preço; PFE (prato feito executivo), PFF (prato feito fitness) e B (bebida) usam o preço do próprio item.
+table dTamanho
+	lineageTag: 97df46a7-3468-4cae-8411-065c02010bd8
+
+	column Sigla
+		dataType: string
+		lineageTag: 8cfa5954-1924-4841-927c-1737970cb4a0
+		summarizeBy: none
+		sourceColumn: Sigla
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tamanho
+		dataType: string
+		lineageTag: ca174057-cb34-411c-a8f3-74d4ba0229fe
+		summarizeBy: none
+		sourceColumn: Tamanho
+		sortByColumn: Ordem
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Preço da Marmita'
+		dataType: decimal
+		formatString: \R$ #,0.00
+		lineageTag: 159b2920-402c-4646-a03d-af06e77f905c
+		summarizeBy: none
+		sourceColumn: Preço da Marmita
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ordem de exibição: P, M, G, PFE, PFF e B.
+	column Ordem
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6b1f0c52-8e3d-4a7b-9d21-3f5a0e7c9b14
+		summarizeBy: none
+		sourceColumn: Ordem
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dTamanho = m
+		mode: import
+		source =
+				let
+					// 1. Conecta no MySQL e abre a tabela tamanho_marmita (P, M, G, PFE, PFF e B)
+					Fonte = MySQL.Database(Servidor, Banco, [ReturnSingleDatabase = true]),
+					Tabela = Fonte{[Schema = Banco, Item = "tamanho_marmita"]}[Data],
+					// 2. Ordem para os gráficos (P, M, G, PFE, PFF, B)
+					Ordem = Table.AddColumn(Tabela, "Ordem", each
+						if [sigla] = "P" then 1 else if [sigla] = "M" then 2 else if [sigla] = "G" then 3
+						else if [sigla] = "PFE" then 4 else if [sigla] = "PFF" then 5 else 6, Int64.Type),
+					// 3. O preço já vem em reais; fica vazio em PFE, PFF e B (vale o do item)
+					Renomeado = Table.RenameColumns(Ordem, {{"sigla", "Sigla"}, {"nome", "Tamanho"}, {"preco", "Preço da Marmita"}}),
+					Tipos = Table.TransformColumnTypes(Renomeado, {{"Sigla", type text}, {"Tamanho", type text}, {"Preço da Marmita", Currency.Type}})
+				in
+					Tipos
+
+	annotation PBI_ResultType = Table
+

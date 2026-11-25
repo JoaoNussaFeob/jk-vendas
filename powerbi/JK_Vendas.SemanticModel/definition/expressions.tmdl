@@ -1,0 +1,12 @@
+/// Endereço do MySQL. Exemplos: localhost ou localhost:3306
+expression Servidor = "localhost" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: c228d5d6-f0f6-4f65-966d-8ece29ac1583
+
+	annotation PBI_ResultType = Text
+
+/// Nome do banco criado pelo sql/jk_vendas.sql
+expression Banco = "jk_vendas_porcoes" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 312f10a3-07ef-4cf2-8486-e38d016e626d
+
+	annotation PBI_ResultType = Text
+

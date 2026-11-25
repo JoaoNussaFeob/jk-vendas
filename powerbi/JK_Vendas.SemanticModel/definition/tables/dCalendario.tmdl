@@ -1,0 +1,162 @@
+/// Calendário criado em DAX, do primeiro ao último dia com venda ou sobra. Marcado como tabela de datas.
+table dCalendario
+	lineageTag: 17742a4a-f211-46fa-84fe-43682d2d01d5
+	dataCategory: Time
+
+	column Data
+		dataType: dateTime
+		isKey
+		formatString: dd/mm/yyyy
+		lineageTag: e164e098-da2f-486f-8b8f-efd59c83b594
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Data]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		lineageTag: 183e5a8b-ab5f-437c-b10f-227efec6cf28
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ano]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mês Nº'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 048273dc-4416-41ed-8e7d-03bbeec34b1d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês Nº]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mês
+		dataType: string
+		lineageTag: 47e2a3a6-e425-422d-9488-24af1814391b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês]
+		sortByColumn: 'Mês Nº'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ano Mês Nº'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0f4450be-60e9-4c2e-9e4c-0dafc5fbe039
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ano Mês Nº]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mês/Ano
+		dataType: string
+		lineageTag: c0fc1584-d096-47f1-8d50-252d0a5a30f5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês/Ano]
+		sortByColumn: 'Ano Mês Nº'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dia
+		dataType: int64
+		formatString: 0
+		lineageTag: 680a0fc3-cdce-43cd-a51f-543e428123b6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Dia]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia da Semana Nº'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 55c47a83-374b-4cc9-a263-18ff741a7e9c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Dia da Semana Nº]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia da Semana'
+		dataType: string
+		lineageTag: 7e7ee2ce-92a9-40ff-862f-d3a3fada9f67
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Dia da Semana]
+		sortByColumn: 'Dia da Semana Nº'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tipo de Dia'
+		dataType: string
+		lineageTag: c177369c-ce81-4da4-b78b-dcb5a01147f8
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Tipo de Dia]
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Rótulo curto para os eixos: 13/10 ter
+	column 'Dia (rótulo)'
+		dataType: string
+		lineageTag: 9250ade1-fc2c-406f-b0a0-3218573cab5f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Dia (rótulo)]
+		sortByColumn: Data
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy Calendário
+		lineageTag: b329ba52-0d07-4dcf-95dd-f7a5471c5819
+
+		level Ano
+			lineageTag: 4ea631ea-2813-4127-83a4-2596b0f2de58
+			column: Ano
+
+		level Mês
+			lineageTag: e21b036e-b9d4-4145-b266-2b4ca18c9e23
+			column: Mês
+
+		level Dia
+			lineageTag: 6b3ba1bd-f748-4c5a-9f0f-306089b14a4b
+			column: Dia
+
+	partition dCalendario = calculated
+		mode: import
+		source =
+				VAR _Datas =
+					UNION (
+						SELECTCOLUMNS ( fVendas, "D", fVendas[Data] ),
+						SELECTCOLUMNS ( fPorcao, "D", fPorcao[Data] )
+					)
+				VAR _Inicio = COALESCE ( MINX ( _Datas, [D] ), DATE ( 2026, 10, 13 ) )
+				VAR _Fim = COALESCE ( MAXX ( _Datas, [D] ), _Inicio )
+				VAR _Base = SELECTCOLUMNS ( CALENDAR ( _Inicio, _Fim ), "Data", [Date] )
+				RETURN
+					ADDCOLUMNS (
+						_Base,
+						"Ano", YEAR ( [Data] ),
+						"Mês Nº", MONTH ( [Data] ),
+						"Mês", FORMAT ( [Data], "mmmm", "pt-BR" ),
+						"Ano Mês Nº", YEAR ( [Data] ) * 100 + MONTH ( [Data] ),
+						"Mês/Ano", FORMAT ( [Data], "mmm/yyyy", "pt-BR" ),
+						"Dia", DAY ( [Data] ),
+						"Dia da Semana Nº", WEEKDAY ( [Data], 2 ),
+						"Dia da Semana", FORMAT ( [Data], "ddd", "pt-BR" ),
+						"Tipo de Dia", IF ( WEEKDAY ( [Data], 2 ) >= 6, "Fim de semana", "Dia útil" ),
+						"Dia (rótulo)", FORMAT ( [Data], "dd/mm", "pt-BR" ) & " " & FORMAT ( [Data], "ddd", "pt-BR" )
+					)
+
+	annotation PBI_Id = 131b06be437f49c2a81bbe8db5dcd28a
+

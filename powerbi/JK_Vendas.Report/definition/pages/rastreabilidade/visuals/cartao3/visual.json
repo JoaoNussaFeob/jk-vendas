@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "cartao3",
+  "position": {
+    "x": 742,
+    "y": 84,
+    "z": 3000,
+    "height": 92,
+    "width": 303,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Itens no Catálogo"
+                }
+              },
+              "queryRef": "_Medidas.Itens no Catálogo",
+              "nativeQueryRef": "Itens no Catálogo"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

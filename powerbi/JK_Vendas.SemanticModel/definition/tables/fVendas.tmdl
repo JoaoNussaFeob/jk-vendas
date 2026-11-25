@@ -1,0 +1,154 @@
+/// Fato das vendas: uma linha por item vendido. Vem da visão vw_fvendas (tabelas pedido e pedido_item, gravadas pelo programa Dart).
+table fVendas
+	lineageTag: e617d4c0-389a-4b06-aff3-409475fd771c
+
+	column 'ID Pedido Item'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 29e6fcea-91c2-450d-afe1-acce18d16150
+		summarizeBy: none
+		sourceColumn: ID Pedido Item
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ID Pedido'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6050ade3-36c7-4214-b305-7ac405fe8ddf
+		summarizeBy: none
+		sourceColumn: ID Pedido
+
+		annotation SummarizationSetBy = Automatic
+
+	column Data
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		lineageTag: 5bfc6c20-63e2-46bd-9c26-29790f5f8307
+		summarizeBy: none
+		sourceColumn: Data
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Horário
+		dataType: dateTime
+		formatString: hh:nn
+		lineageTag: 5b92ff9d-2783-4c70-9aea-e77b4e6056dc
+		summarizeBy: none
+		sourceColumn: Horário
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	column 'Hora do Dia'
+		dataType: int64
+		formatString: 0
+		lineageTag: 3e702d41-fe33-42d9-a350-b66974bf77b9
+		summarizeBy: none
+		sourceColumn: Hora do Dia
+
+		annotation SummarizationSetBy = Automatic
+
+	column Período
+		dataType: string
+		lineageTag: a2bcbebd-67b2-4848-9128-22ce918d6d3f
+		summarizeBy: none
+		sourceColumn: Período
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ID Item'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 66023535-5f84-470a-8f5a-129dce3b8960
+		summarizeBy: none
+		sourceColumn: ID Item
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tamanho
+		dataType: string
+		isHidden
+		lineageTag: d6e8caf1-445b-4ce1-bf13-aa34315771b9
+		summarizeBy: none
+		sourceColumn: Tamanho
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantidade
+		dataType: int64
+		formatString: #,0
+		lineageTag: 2796d258-8270-46a1-9f21-335bfc06d62e
+		summarizeBy: sum
+		sourceColumn: Quantidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Preço Unitário'
+		dataType: decimal
+		formatString: \R$ #,0.00
+		lineageTag: cadada55-c2df-4bae-8e0c-d0921a065629
+		summarizeBy: none
+		sourceColumn: Preço Unitário
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Valor Total'
+		dataType: decimal
+		formatString: \R$ #,0.00
+		lineageTag: d1236434-0688-45fd-af18-e38208cfab95
+		summarizeBy: sum
+		sourceColumn: Valor Total
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Forma de Pagamento'
+		dataType: string
+		lineageTag: f4785a64-9a20-4d48-bfd3-ef560876c108
+		summarizeBy: none
+		sourceColumn: Forma de Pagamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column Local
+		dataType: string
+		lineageTag: 97c89ea9-a837-4d23-8af3-968d9041bb18
+		summarizeBy: none
+		sourceColumn: Local
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fVendas = m
+		mode: import
+		source =
+				let
+					// 1. Conecta no MySQL e abre a visão vw_fvendas (os valores já vêm em reais)
+					Fonte = MySQL.Database(Servidor, Banco, [ReturnSingleDatabase = true]),
+					Visao = Fonte{[Schema = Banco, Item = "vw_fvendas"]}[Data],
+					// 2. A hora vem do tipo TIME do MySQL; dependendo do driver chega como time ou duration
+					Horario = Table.TransformColumns(Visao, {{"hora", each if _ is time then _ else if _ is duration then #time(0, 0, 0) + _ else null, type time}}),
+					// 3. Hora cheia e período: o restaurante abre no almoço (11h às 15h) e à noite (18h às 22h)
+					HoraDoDia = Table.AddColumn(Horario, "Hora do Dia", each Time.Hour([hora]), Int64.Type),
+					Periodo = Table.AddColumn(HoraDoDia, "Período", each if [Hora do Dia] < 17 then "Almoço" else "Noite", type text),
+					// 4. Nomes fáceis de ler no relatório
+					Renomeado = Table.RenameColumns(Periodo, {
+						{"id_pedido_item", "ID Pedido Item"}, {"id_pedido", "ID Pedido"}, {"data", "Data"}, {"hora", "Horário"},
+						{"id_item", "ID Item"}, {"tamanho", "Tamanho"}, {"quantidade", "Quantidade"},
+						{"preco_unitario", "Preço Unitário"}, {"valor_total", "Valor Total"},
+						{"forma_pagamento", "Forma de Pagamento"}, {"local_pedido", "Local"}}),
+					// 5. Tipos de dados: inteiro, data, texto e moeda (número decimal fixo)
+					Tipos = Table.TransformColumnTypes(Renomeado, {
+						{"ID Pedido Item", Int64.Type}, {"ID Pedido", Int64.Type}, {"Data", type date},
+						{"ID Item", Int64.Type}, {"Tamanho", type text}, {"Quantidade", Int64.Type},
+						{"Preço Unitário", Currency.Type}, {"Valor Total", Currency.Type},
+						{"Forma de Pagamento", type text}, {"Local", type text}})
+				in
+					Tipos
+
+	annotation PBI_ResultType = Table
+

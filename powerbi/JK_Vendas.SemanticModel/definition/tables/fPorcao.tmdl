@@ -1,0 +1,135 @@
+/// Fato das porções do dia, em kg (visão vw_fporcao): preparado, reaproveitado, sobra e desperdício. Base dos indicadores da ODS 12.
+table fPorcao
+	lineageTag: 61475d04-fe26-4bd4-a028-4a4402ead66b
+
+	column Data
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		lineageTag: dc954045-c4f0-41b6-baf0-771b8a2e685d
+		summarizeBy: none
+		sourceColumn: Data
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ID Porção'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: bc56693f-4aa8-4553-bcbb-1a9c34dca7cc
+		summarizeBy: none
+		sourceColumn: ID Porção
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ID Item'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: d30f3967-b731-4948-9c81-98b25496a4d7
+		summarizeBy: none
+		sourceColumn: ID Item
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kg Preparado'
+		dataType: double
+		formatString: #,0.000
+		lineageTag: 816cee9b-abc9-4737-9a98-7181357622c7
+		summarizeBy: sum
+		sourceColumn: Kg Preparado
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kg Reaproveitado'
+		dataType: double
+		formatString: #,0.000
+		lineageTag: 2b8c18ae-ba08-4a84-8f87-0c5a8128b80f
+		summarizeBy: sum
+		sourceColumn: Kg Reaproveitado
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kg Sobra'
+		dataType: double
+		formatString: #,0.000
+		lineageTag: ed9a5465-a459-4d88-b349-d09de095903e
+		summarizeBy: sum
+		sourceColumn: Kg Sobra
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kg Consumido'
+		dataType: double
+		formatString: #,0.000
+		lineageTag: db94c9a5-7ee3-4bb8-89f2-1bbfe1892c61
+		summarizeBy: sum
+		sourceColumn: Kg Consumido
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kg Desperdício'
+		dataType: double
+		formatString: #,0.000
+		lineageTag: e3f8ba3f-22f9-4129-b39b-cb79a43c979a
+		summarizeBy: sum
+		sourceColumn: Kg Desperdício
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kg Reaproveitado Depois'
+		dataType: double
+		formatString: #,0.000
+		lineageTag: c4eb58b9-25e2-4f67-bc19-a4482d719b30
+		summarizeBy: sum
+		sourceColumn: Kg Reaproveitado Depois
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kg na Geladeira'
+		dataType: double
+		formatString: #,0.000
+		lineageTag: c0f9541c-4e2b-4940-9cc7-635de0a2a26d
+		summarizeBy: sum
+		sourceColumn: Kg na Geladeira
+
+		annotation SummarizationSetBy = Automatic
+
+	column Validade
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 43528e24-e800-4b96-ae68-604c068696d4
+		summarizeBy: none
+		sourceColumn: Validade
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fPorcao = m
+		mode: import
+		source =
+				let
+					// 1. Conecta no MySQL e abre a visão vw_fporcao (só porções já registradas)
+					Fonte = MySQL.Database(Servidor, Banco, [ReturnSingleDatabase = true]),
+					Visao = Fonte{[Schema = Banco, Item = "vw_fporcao"]}[Data],
+					// 2. Nomes em português; o desperdício já vem calculado pela visão
+					//    (mistura e acompanhamento: toda a sobra; arroz e feijão: o que venceu na geladeira)
+					Renomeado = Table.RenameColumns(Visao, {
+						{"data", "Data"}, {"id_porcao", "ID Porção"}, {"id_item", "ID Item"},
+						{"kg_preparado", "Kg Preparado"}, {"kg_reaproveitado", "Kg Reaproveitado"}, {"kg_sobra", "Kg Sobra"},
+						{"kg_consumido", "Kg Consumido"}, {"kg_desperdicio", "Kg Desperdício"},
+						{"kg_reaproveitado_depois", "Kg Reaproveitado Depois"}, {"kg_ainda_na_geladeira", "Kg na Geladeira"},
+						{"validade", "Validade"}}),
+					Tipos = Table.TransformColumnTypes(Renomeado, {
+						{"Data", type date}, {"ID Porção", Int64.Type}, {"ID Item", Int64.Type},
+						{"Kg Preparado", type number}, {"Kg Reaproveitado", type number}, {"Kg Sobra", type number},
+						{"Kg Consumido", type number}, {"Kg Desperdício", type number},
+						{"Kg Reaproveitado Depois", type number}, {"Kg na Geladeira", type number}, {"Validade", type date}})
+				in
+					Tipos
+
+	annotation PBI_ResultType = Table
+

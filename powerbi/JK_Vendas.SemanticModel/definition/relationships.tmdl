@@ -1,0 +1,24 @@
+relationship 01f8b3f0-6eb5-4634-8f4e-231025f4961d
+	fromColumn: fVendas.Data
+	toColumn: dCalendario.Data
+
+relationship 8c8c3c70-913a-4b0f-8644-1851bf4d9ca5
+	fromColumn: fVendas.'ID Item'
+	toColumn: dItem.'ID Item'
+
+relationship 2f595afc-d1cb-4a07-9070-9e74d1b35bc5
+	fromColumn: fVendas.Tamanho
+	toColumn: dTamanho.Sigla
+
+relationship 35c8b476-7cdd-4c3a-81c6-3ecc24224fb9
+	fromColumn: fPorcao.Data
+	toColumn: dCalendario.Data
+
+relationship cfd0093e-95b2-4987-a8cd-0552df32884d
+	fromColumn: fPorcao.'ID Item'
+	toColumn: dItem.'ID Item'
+
+relationship 45d7e642-d73f-4c86-9889-548cc668cb4b
+	fromColumn: fPorcao.'ID Porção'
+	toColumn: dPorcao.'ID Porção'
+

@@ -1,0 +1,126 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 14.65706419366658,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 1021.9086809699945,
+            "y": 574.65297418183616
+          },
+          "nodeIndex": "_Medidas",
+          "nodeLineageTag": "03cadd52-4d40-4bc1-900b-245006d932d8",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 121.01850577238136,
+            "y": 0
+          },
+          "nodeIndex": "dCalendario",
+          "nodeLineageTag": "17742a4a-f211-46fa-84fe-43682d2d01d5",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 510.72338001898828,
+            "y": 521.47935799572519
+          },
+          "nodeIndex": "dItem",
+          "nodeLineageTag": "50ce6725-1591-47d8-a651-aa2664413baa",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 466.07509376322776,
+            "y": 0
+          },
+          "nodeIndex": "dTamanho",
+          "nodeLineageTag": "97df46a7-3468-4cae-8411-065c02010bd8",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1324.2300118841001,
+            "y": 180.63035980770655
+          },
+          "nodeIndex": "fAlteracao",
+          "nodeLineageTag": "30bb6ef6-b380-4b0a-9153-04cb81964c6f",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 123.28532365642258,
+            "y": 453.9368593685698
+          },
+          "nodeIndex": "fPorcao",
+          "nodeLineageTag": "61475d04-fe26-4bd4-a028-4a4402ead66b",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 869.65000350985042,
+            "y": 0
+          },
+          "nodeIndex": "fVendas",
+          "nodeLineageTag": "e617d4c0-389a-4b06-aff3-409475fd771c",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1558.2300118841001,
+            "y": 228.63035980770655
+          },
+          "nodeIndex": "dPorcao",
+          "nodeLineageTag": "ec4603c7-3f04-4d99-8931-b855c9b7c8ca",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Todas as tabelas",
+      "zoomValue": 70.955543900968834,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas as tabelas",
+  "defaultDiagram": "Todas as tabelas"
+}

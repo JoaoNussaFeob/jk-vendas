@@ -1,0 +1,114 @@
+{
+  "name": "JK Vendas",
+  "dataColors": [
+    "#B23A1E",
+    "#E07B39",
+    "#2E7D6B",
+    "#E3A72F",
+    "#4F6D8F",
+    "#7A4E35",
+    "#8FA35B",
+    "#C25E7A"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#2B2522",
+  "tableAccent": "#B23A1E",
+  "good": "#2E7D6B",
+  "neutral": "#E3A72F",
+  "bad": "#B23A1E",
+  "maximum": "#B23A1E",
+  "center": "#E3A72F",
+  "minimum": "#F6E3D6",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#E8DDD2"
+              }
+            },
+            "radius": 10
+          }
+        ],
+        "title": [
+          {
+            "fontColor": {
+              "solid": {
+                "color": "#5A2A1A"
+              }
+            },
+            "fontSize": 11,
+            "bold": true
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": {
+              "solid": {
+                "color": "#F7F2EC"
+              }
+            },
+            "transparency": 0
+          }
+        ]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#B23A1E"
+              }
+            },
+            "fontSize": 22,
+            "labelDisplayUnits": 1
+          }
+        ],
+        "categoryLabels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#6B5D55"
+              }
+            },
+            "fontSize": 10
+          }
+        ]
+      }
+    },
+    "textbox": {
+      "*": {
+        "background": [
+          {
+            "show": false
+          }
+        ],
+        "border": [
+          {
+            "show": false
+          }
+        ]
+      }
+    }
+  }
+}

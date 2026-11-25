@@ -1,0 +1,148 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "Fluent2-CY26SU08",
+      "reportVersionAtImport": {
+        "visual": "2.12.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "JKVendas.json",
+      "reportVersionAtImport": {
+        "visual": "2.12.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "Fluent2-CY26SU08",
+          "path": "BaseThemes/Fluent2-CY26SU08.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "JKVendas.json",
+          "path": "JKVendas.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "nav_itensPoo_ativo.svg",
+          "path": "nav_itensPoo_ativo.svg",
+          "type": "Image"
+        },
+        {
+          "name": "nav_itensPoo.svg",
+          "path": "nav_itensPoo.svg",
+          "type": "Image"
+        },
+        {
+          "name": "nav_logo.svg",
+          "path": "nav_logo.svg",
+          "type": "Image"
+        },
+        {
+          "name": "nav_rastreabilidade_ativo.svg",
+          "path": "nav_rastreabilidade_ativo.svg",
+          "type": "Image"
+        },
+        {
+          "name": "nav_rastreabilidade.svg",
+          "path": "nav_rastreabilidade.svg",
+          "type": "Image"
+        },
+        {
+          "name": "nav_sobraOds12_ativo.svg",
+          "path": "nav_sobraOds12_ativo.svg",
+          "type": "Image"
+        },
+        {
+          "name": "nav_sobraOds12.svg",
+          "path": "nav_sobraOds12.svg",
+          "type": "Image"
+        },
+        {
+          "name": "nav_visaoGeral_ativo.svg",
+          "path": "nav_visaoGeral_ativo.svg",
+          "type": "Image"
+        },
+        {
+          "name": "nav_visaoGeral.svg",
+          "path": "nav_visaoGeral.svg",
+          "type": "Image"
+        },
+        {
+          "name": "fundo_visaoGeral.png",
+          "path": "fundo_visaoGeral.png",
+          "type": "Image"
+        },
+        {
+          "name": "fundo_itensPoo.png",
+          "path": "fundo_itensPoo.png",
+          "type": "Image"
+        },
+        {
+          "name": "fundo_sobraOds12.png",
+          "path": "fundo_sobraOds12.png",
+          "type": "Image"
+        },
+        {
+          "name": "fundo_rastreabilidade.png",
+          "path": "fundo_rastreabilidade.png",
+          "type": "Image"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "alertas",
+  "position": {
+    "x": 484,
+    "y": 450,
+    "z": 11000,
+    "height": 254,
+    "width": 876,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dPorcao"
+                    }
+                  },
+                  "Property": "Porção"
+                }
+              },
+              "queryRef": "dPorcao.Porção",
+              "nativeQueryRef": "Porção"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Kg Preparado"
+                }
+              },
+              "queryRef": "_Medidas.Kg Preparado",
+              "nativeQueryRef": "Kg Preparado",
+              "displayName": "Preparado (kg)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Kg Reaproveitado"
+                }
+              },
+              "queryRef": "_Medidas.Kg Reaproveitado",
+              "nativeQueryRef": "Kg Reaproveitado",
+              "displayName": "Reaproveitado (kg)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Kg Sobra"
+                }
+              },
+              "queryRef": "_Medidas.Kg Sobra",
+              "nativeQueryRef": "Kg Sobra",
+              "displayName": "Sobra (kg)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "% de Desperdício"
+                }
+              },
+              "queryRef": "_Medidas.% Desperdício",
+              "nativeQueryRef": "% Desperdício"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Kg Desperdiçado"
+                }
+              },
+              "queryRef": "_Medidas.Kg Desperdiçado",
+              "nativeQueryRef": "Kg Desperdiçado",
+              "displayName": "Lixo (kg)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Alerta de Sobra"
+                }
+              },
+              "queryRef": "_Medidas.Alerta de Sobra",
+              "nativeQueryRef": "Alerta de Sobra",
+              "displayName": "Alerta"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Medidas"
+                  }
+                },
+                "Property": "% de Desperdício"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Alerta por porção'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

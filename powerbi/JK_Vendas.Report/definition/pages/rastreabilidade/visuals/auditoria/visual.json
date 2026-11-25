@@ -1,0 +1,216 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "auditoria",
+  "position": {
+    "x": 524,
+    "y": 188,
+    "z": 6000,
+    "height": 516,
+    "width": 836,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fAlteracao"
+                    }
+                  },
+                  "Property": "Nº"
+                }
+              },
+              "queryRef": "fAlteracao.Nº",
+              "nativeQueryRef": "Nº"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fAlteracao"
+                    }
+                  },
+                  "Property": "Alterado Em"
+                }
+              },
+              "queryRef": "fAlteracao.Alterado Em",
+              "nativeQueryRef": "Alterado Em"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fAlteracao"
+                    }
+                  },
+                  "Property": "Usuário"
+                }
+              },
+              "queryRef": "fAlteracao.Usuário",
+              "nativeQueryRef": "Usuário"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fAlteracao"
+                    }
+                  },
+                  "Property": "Tabela"
+                }
+              },
+              "queryRef": "fAlteracao.Tabela",
+              "nativeQueryRef": "Tabela"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fAlteracao"
+                    }
+                  },
+                  "Property": "Registro"
+                }
+              },
+              "queryRef": "fAlteracao.Registro",
+              "nativeQueryRef": "Registro"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fAlteracao"
+                    }
+                  },
+                  "Property": "Tipo de Alteração"
+                }
+              },
+              "queryRef": "fAlteracao.Tipo de Alteração",
+              "nativeQueryRef": "Tipo de Alteração"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fAlteracao"
+                    }
+                  },
+                  "Property": "Valor Antigo"
+                }
+              },
+              "queryRef": "fAlteracao.Valor Antigo",
+              "nativeQueryRef": "Valor Antigo"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fAlteracao"
+                    }
+                  },
+                  "Property": "Valor Novo"
+                }
+              },
+              "queryRef": "fAlteracao.Valor Novo",
+              "nativeQueryRef": "Valor Novo"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fAlteracao"
+                  }
+                },
+                "Property": "Nº"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Histórico '"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

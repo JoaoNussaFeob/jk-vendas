@@ -1,0 +1,143 @@
+/// Dimensão dos itens (visão vw_ditem). Cada tipo do banco é ligado à classe do programa Dart que o representa.
+table dItem
+	lineageTag: 50ce6725-1591-47d8-a651-aa2664413baa
+
+	column 'ID Item'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 3fa26be7-807d-45ba-8f97-3df56421f198
+		summarizeBy: none
+		sourceColumn: ID Item
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item
+		dataType: string
+		lineageTag: 5048d6ac-49cb-41f8-9c84-f06263880cd5
+		summarizeBy: none
+		sourceColumn: Item
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tipo
+		dataType: string
+		lineageTag: 4201e559-752a-4153-95de-fc7ffd7d19a4
+		summarizeBy: none
+		sourceColumn: Tipo
+		sortByColumn: 'Ordem Tipo'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ordem Tipo'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0db8195e-efae-4600-bd66-3dca99fda79f
+		summarizeBy: none
+		sourceColumn: Ordem Tipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoria
+		dataType: string
+		lineageTag: 7fe6617a-1ad1-4dc4-b552-e6aa5b44d8e7
+		summarizeBy: none
+		sourceColumn: Categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column Preço
+		dataType: decimal
+		formatString: \R$ #,0.00
+		lineageTag: 68e27270-3d42-406d-8031-fdcc85a607ab
+		summarizeBy: none
+		sourceColumn: Preço
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Nome da classe do Dart (item_vendavel.dart) que representa o item.
+	column 'Classe POO (Dart)'
+		dataType: string
+		lineageTag: 88f1681a-77c9-4503-95a8-04a97e53e108
+		summarizeBy: none
+		sourceColumn: Classe POO (Dart)
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Classe mãe na herança: PratoDia herda direto de ItemVendavel; os outros herdam de ItemPrecoFixo.
+	column 'Classe Mãe (Dart)'
+		dataType: string
+		lineageTag: a68291a0-6b2c-4739-9226-040b87180a1f
+		summarizeBy: none
+		sourceColumn: Classe Mãe (Dart)
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Como o método calcularPreco de cada classe chega ao preço (polimorfismo).
+	column 'Regra de Preço'
+		dataType: string
+		lineageTag: 4f1ff342-fefa-4d1b-8cad-d6253dc51038
+		summarizeBy: none
+		sourceColumn: Regra de Preço
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Status do Preço'
+		dataType: string
+		lineageTag: b8ee7160-5418-4b76-a4da-45882e767560
+		summarizeBy: none
+		sourceColumn: Status do Preço
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy Cardápio
+		lineageTag: e3b3a19f-28bc-4cda-8279-4b04725349f6
+
+		level 'Classe Mãe'
+			lineageTag: ddb8fbd5-f197-40ba-95f4-34575b4ab8e7
+			column: 'Classe Mãe (Dart)'
+
+		level 'Classe POO'
+			lineageTag: 09c24e5e-2827-4258-8b02-f7f3b207a7c0
+			column: 'Classe POO (Dart)'
+
+		level Item
+			lineageTag: c14f2d74-57b4-4297-be63-09c9322f40e0
+			column: Item
+
+	partition dItem = m
+		mode: import
+		source =
+				let
+					// 1. Conecta no MySQL e abre a visão vw_ditem (fitness e executivo já vêm com o tipo no nome)
+					Fonte = MySQL.Database(Servidor, Banco, [ReturnSingleDatabase = true]),
+					Visao = Fonte{[Schema = Banco, Item = "vw_ditem"]}[Data],
+					// 2. Liga o tipo do banco à classe do Dart (herança em item_vendavel.dart)
+					ClassePOO = Table.AddColumn(Visao, "Classe POO (Dart)", each
+						if [tipo] = "Prato do dia" then "PratoDia"
+						else if [tipo] = "Fitness" then "PratoFitness"
+						else if [tipo] = "Executivo" then "PratoExecutivo"
+						else "Bebida", type text),
+					ClasseMae = Table.AddColumn(ClassePOO, "Classe Mãe (Dart)", each
+						if [tipo] = "Prato do dia" then "ItemVendavel" else "ItemPrecoFixo", type text),
+					// 3. Como cada classe calcula o preço (o método calcularPreco é polimórfico)
+					RegraPreco = Table.AddColumn(ClasseMae, "Regra de Preço", each
+						if [tipo] = "Prato do dia" then "Preço da marmita (P, M ou G)" else "Preço fixo do item", type text),
+					OrdemTipo = Table.AddColumn(RegraPreco, "Ordem Tipo", each
+						if [tipo] = "Prato do dia" then 1 else if [tipo] = "Fitness" then 2 else if [tipo] = "Executivo" then 3 else 4, Int64.Type),
+					// 4. A coluna confirmar (0 ou 1) vira um texto fácil de ler
+					StatusPreco = Table.AddColumn(OrdemTipo, "Status do Preço", each
+						if [confirmar] = true or [confirmar] = 1 then "A confirmar (teste)" else "Confirmado", type text),
+					SemConfirmar = Table.RemoveColumns(StatusPreco, {"confirmar"}),
+					Renomeado = Table.RenameColumns(SemConfirmar, {
+						{"id_item", "ID Item"}, {"item", "Item"}, {"tipo", "Tipo"}, {"categoria", "Categoria"},
+						{"preco", "Preço"}}),
+					Tipos = Table.TransformColumnTypes(Renomeado, {
+						{"ID Item", Int64.Type}, {"Item", type text}, {"Tipo", type text}, {"Categoria", type text},
+						{"Preço", Currency.Type}})
+				in
+					Tipos
+
+	annotation PBI_ResultType = Table
+
